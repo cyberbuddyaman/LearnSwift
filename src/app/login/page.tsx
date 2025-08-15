@@ -10,6 +10,24 @@ import { Label } from '@/components/ui/label';
 import { useAuth } from '@/hooks/use-auth';
 import Link from 'next/link';
 
+function getFirebaseErrorMessage(errorCode: string): string {
+  switch (errorCode) {
+    case 'auth/invalid-email':
+      return 'Invalid email address.';
+    case 'auth/user-not-found':
+    case 'auth/wrong-password':
+      return 'Invalid email or password.';
+    case 'auth/weak-password':
+      return 'Password should be at least 6 characters.';
+    case 'auth/email-already-in-use':
+      return 'An account with this email already exists.';
+    case 'auth/configuration-not-found':
+       return 'Firebase authentication is not configured. Please enable it in your Firebase project console.';
+    default:
+      return 'An unexpected error occurred. Please try again.';
+  }
+}
+
 export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -24,7 +42,11 @@ export default function LoginPage() {
       await login(email, password);
       router.push('/dashboard');
     } catch (err) {
-      setError((err as Error).message);
+      if (err instanceof Error && 'code' in err) {
+         setError(getFirebaseErrorMessage((err as any).code));
+      } else {
+        setError((err as Error).message);
+      }
     }
   };
 
