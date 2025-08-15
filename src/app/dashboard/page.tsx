@@ -13,21 +13,7 @@ import Link from "next/link";
 
 export default function StudentDashboard() {
   const { user, userData, loading } = useAuth();
-  const enrolledCourses = courses.filter(c => c.isEnrolled);
-
-  const gamification = {
-    badges: [
-      { id: 1, name: 'Swift Starter', icon: <Star className="h-6 w-6 text-yellow-400" />, date: '2023-10-05' },
-      { id: 2, name: 'UI Pro', icon: <Award className="h-6 w-6 text-blue-500" />, date: '2023-11-12' },
-      { id: 3, name: '5-Day Streak', icon: <Flame className="h-6 w-6 text-orange-500" />, date: '2023-11-18' },
-    ],
-    leaderboard: [
-      { id: 1, name: 'Alex Johnson', points: 1250, avatar: 'https://i.pravatar.cc/150?u=alex' },
-      { id: 2, name: 'You', points: 1100, avatar: userData?.avatar || `https://i.pravatar.cc/150?u=${user?.uid}` },
-      { id: 3, name: 'Maria Garcia', points: 980, avatar: 'https://i.pravatar.cc/150?u=maria' },
-    ]
-  };
-
+  
   if (loading) {
     return (
       <div className="container mx-auto px-4 py-8">
@@ -49,14 +35,39 @@ export default function StudentDashboard() {
     );
   }
   
-  if(!user) return null;
+  if(!user || !userData) {
+    // This case should be handled by the redirect in useAuth, but as a fallback:
+    return (
+       <div className="container mx-auto px-4 py-8 text-center">
+         <p>Please log in to view your dashboard.</p>
+         <Link href="/login">
+            <Button className="mt-4">Login</Button>
+         </Link>
+       </div>
+    )
+  }
+
+  const enrolledCourses = courses.filter(c => c.isEnrolled);
+
+  const gamification = {
+    badges: [
+      { id: 1, name: 'Swift Starter', icon: <Star className="h-6 w-6 text-yellow-400" />, date: '2023-10-05' },
+      { id: 2, name: 'UI Pro', icon: <Award className="h-6 w-6 text-blue-500" />, date: '2023-11-12' },
+      { id: 3, name: '5-Day Streak', icon: <Flame className="h-6 w-6 text-orange-500" />, date: '2023-11-18' },
+    ],
+    leaderboard: [
+      { id: 1, name: 'Alex Johnson', points: 1250, avatar: 'https://i.pravatar.cc/150?u=alex' },
+      { id: 2, name: 'You', points: 1100, avatar: userData?.avatar || `https://i.pravatar.cc/150?u=${user?.uid}` },
+      { id: 3, name: 'Maria Garcia', points: 980, avatar: 'https://i.pravatar.cc/150?u=maria' },
+    ]
+  };
 
 
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
         <div>
-          <h1 className="text-3xl font-headline font-bold">Welcome Back, {userData?.name || user.displayName || 'Student'}!</h1>
+          <h1 className="text-3xl font-headline font-bold">Welcome Back, {userData.name || user.displayName || 'Student'}!</h1>
           <p className="text-muted-foreground">Continue your learning journey and build something amazing today.</p>
         </div>
         <Link href="/courses">
@@ -100,7 +111,7 @@ export default function StudentDashboard() {
                         <AvatarFallback>{leaderboardUser.name.charAt(0)}</AvatarFallback>
                       </Avatar>
                       <div>
-                        <p className="font-semibold">{leaderboardUser.name === 'You' ? (userData?.name || 'You') : leaderboardUser.name}</p>
+                        <p className="font-semibold">{leaderboardUser.name === 'You' ? (userData.name || 'You') : leaderboardUser.name}</p>
                         <p className="text-sm text-muted-foreground">{leaderboardUser.points} XP</p>
                       </div>
                     </div>
