@@ -32,7 +32,7 @@ export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
-  const { login } = useAuth();
+  const { login, isAdmin } = useAuth();
   const router = useRouter();
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -40,7 +40,10 @@ export default function LoginPage() {
     setError(null);
     try {
       await login(email, password);
-      router.push('/dashboard');
+      // The redirection logic is now handled by the useAuth hook.
+      // The hook will wait for the user state and role to be updated
+      // and then redirect to the correct dashboard.
+      // A fallback push can be added if needed, but the hook should handle it.
     } catch (err) {
       if (err instanceof Error && 'code' in err) {
          setError(getFirebaseErrorMessage((err as any).code));
