@@ -9,6 +9,7 @@ import { courses } from "@/lib/data";
 import { Award, Flame, Star, Trophy } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { Skeleton } from "@/components/ui/skeleton";
+import Link from "next/link";
 
 export default function StudentDashboard() {
   const { user, loading } = useAuth();
@@ -53,12 +54,14 @@ export default function StudentDashboard() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
         <div>
           <h1 className="text-3xl font-headline font-bold">Welcome Back, {user.displayName || 'Student'}!</h1>
           <p className="text-muted-foreground">Continue your learning journey and build something amazing today.</p>
         </div>
-        <Button>Browse New Courses</Button>
+        <Link href="/courses">
+          <Button>Browse New Courses</Button>
+        </Link>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -68,6 +71,9 @@ export default function StudentDashboard() {
             {enrolledCourses.map(course => (
               <CourseCard key={course.id} course={course} />
             ))}
+            {enrolledCourses.length === 0 && (
+              <p>You are not enrolled in any courses yet.</p>
+            )}
           </div>
         </div>
 
@@ -102,7 +108,7 @@ export default function StudentDashboard() {
             <CardHeader>
               <CardTitle className="font-headline flex items-center"><Award className="mr-2 h-5 w-5 text-blue-500" /> My Badges</CardTitle>
             </CardHeader>
-            <CardContent className="grid grid-cols-3 gap-4 text-center">
+            <CardContent className="grid grid-cols-2 sm:grid-cols-3 gap-4 text-center">
               {gamification.badges.map(badge => (
                 <div key={badge.id} className="flex flex-col items-center p-2 rounded-md hover:bg-muted transition-colors">
                   <div className="p-3 rounded-full bg-primary/10 mb-2">{badge.icon}</div>

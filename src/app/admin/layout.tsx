@@ -123,17 +123,19 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               </Avatar>
               <div className="flex flex-col text-sm">
                 <span className="font-semibold">{user.displayName || 'Admin User'}</span>
-                <span className="text-muted-foreground">{user.email}</span>
+                <span className="text-muted-foreground truncate">{user.email}</span>
               </div>
             </div>
           </SidebarFooter>
         </Sidebar>
         <SidebarInset>
           <header className="sticky top-0 z-40 flex h-14 items-center justify-between gap-4 border-b bg-background px-4 sm:px-6">
-            <SidebarTrigger className="md:hidden" />
-            <h1 className="text-lg font-semibold md:text-xl font-headline hidden md:block">
-              {menuItems.find((item) => pathname.startsWith(item.href))?.label || 'Admin'}
-            </h1>
+            <div className="flex items-center gap-2">
+              <SidebarTrigger className="md:hidden" />
+              <h1 className="text-lg font-semibold md:text-xl font-headline">
+                {menuItems.find((item) => pathname.startsWith(item.href))?.label || 'Admin'}
+              </h1>
+            </div>
             <div className="flex items-center gap-4 ml-auto">
                 <Button variant="ghost" size="icon">
                     <Bell className="h-5 w-5"/>
@@ -141,7 +143,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 </Button>
             </div>
           </header>
-          <main className="flex-1 p-4 md:p-6 bg-blue-50/30 dark:bg-black">{children}</main>
+          <main className="flex-1 p-4 md:p-6 bg-muted/20">{children}</main>
         </SidebarInset>
       </div>
     </SidebarProvider>

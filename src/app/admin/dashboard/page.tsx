@@ -17,7 +17,7 @@ export default function AdminDashboard() {
   
   return (
     <div className="space-y-6">
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
@@ -60,13 +60,13 @@ export default function AdminDashboard() {
         </Card>
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-2">
-        <Card>
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
+        <Card className="lg:col-span-4">
           <CardHeader>
             <CardTitle>Revenue Overview</CardTitle>
             <CardDescription>Monthly revenue for the last 7 months.</CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="pl-2">
             <ResponsiveContainer width="100%" height={300}>
               <BarChart data={revenueData}>
                 <XAxis dataKey="month" stroke="#888888" fontSize={12} tickLine={false} axisLine={false} />
@@ -78,54 +78,44 @@ export default function AdminDashboard() {
             </ResponsiveContainer>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="lg:col-span-3">
           <CardHeader>
-            <CardTitle>Student Engagement</CardTitle>
-            <CardDescription>Daily logins and course completions.</CardDescription>
+            <CardTitle>Recent Signups</CardTitle>
           </CardHeader>
           <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
-              <LineChart data={engagementData}>
-                 <XAxis dataKey="date" stroke="#888888" fontSize={12} tickLine={false} axisLine={false} />
-                <YAxis stroke="#888888" fontSize={12} tickLine={false} axisLine={false} />
-                <Tooltip cursor={{ fill: 'hsl(var(--muted))' }} />
-                <Legend />
-                <Line type="monotone" dataKey="logins" stroke="hsl(var(--primary))" />
-                <Line type="monotone" dataKey="completions" stroke="hsl(var(--accent))" />
-              </LineChart>
-            </ResponsiveContainer>
+            <div className="space-y-4">
+              {recentSignups.map((user) => (
+                <div className="flex items-center gap-4" key={user.email}>
+                  <Avatar className="h-9 w-9">
+                    <AvatarImage src={user.avatar} alt="Avatar" />
+                    <AvatarFallback>{user.name.slice(0, 2)}</AvatarFallback>
+                  </Avatar>
+                  <div className="flex-1">
+                    <p className="text-sm font-medium leading-none">{user.name}</p>
+                    <p className="text-sm text-muted-foreground">{user.email}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
           </CardContent>
         </Card>
       </div>
        <Card>
         <CardHeader>
-          <CardTitle>Recent Signups</CardTitle>
+          <CardTitle>Student Engagement</CardTitle>
+          <CardDescription>Daily logins and course completions.</CardDescription>
         </CardHeader>
         <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Student</TableHead>
-                <TableHead>Email</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {recentSignups.map((user) => (
-                <TableRow key={user.email}>
-                  <TableCell>
-                    <div className="flex items-center gap-3">
-                      <Avatar className="h-9 w-9">
-                        <AvatarImage src={user.avatar} alt="Avatar" />
-                        <AvatarFallback>{user.name.slice(0, 2)}</AvatarFallback>
-                      </Avatar>
-                      <div className="font-medium">{user.name}</div>
-                    </div>
-                  </TableCell>
-                  <TableCell>{user.email}</TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+          <ResponsiveContainer width="100%" height={300}>
+            <LineChart data={engagementData}>
+                <XAxis dataKey="date" stroke="#888888" fontSize={12} tickLine={false} axisLine={false} />
+              <YAxis stroke="#888888" fontSize={12} tickLine={false} axisLine={false} />
+              <Tooltip cursor={{ fill: 'hsl(var(--muted))' }} />
+              <Legend />
+              <Line type="monotone" dataKey="logins" stroke="hsl(var(--primary))" dot={false} />
+              <Line type="monotone" dataKey="completions" stroke="hsl(var(--accent))" dot={false} />
+            </LineChart>
+          </ResponsiveContainer>
         </CardContent>
       </Card>
     </div>

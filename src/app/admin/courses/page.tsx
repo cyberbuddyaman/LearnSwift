@@ -10,7 +10,7 @@ import Image from "next/image";
 export default function AdminCoursesPage() {
   return (
     <Card>
-      <CardHeader className="flex flex-row items-center justify-between">
+      <CardHeader className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <div>
           <CardTitle>Courses</CardTitle>
           <CardDescription>Manage your courses and view their performance.</CardDescription>
@@ -28,9 +28,9 @@ export default function AdminCoursesPage() {
                 <span className="sr-only">Image</span>
               </TableHead>
               <TableHead>Title</TableHead>
-              <TableHead>Category</TableHead>
-              <TableHead className="hidden md:table-cell">Price</TableHead>
-              <TableHead className="hidden md:table-cell">Instructor</TableHead>
+              <TableHead className="hidden md:table-cell">Category</TableHead>
+              <TableHead className="hidden lg:table-cell">Price</TableHead>
+              <TableHead className="hidden lg:table-cell">Instructor</TableHead>
               <TableHead>
                 <span className="sr-only">Actions</span>
               </TableHead>
@@ -50,11 +50,11 @@ export default function AdminCoursesPage() {
                   />
                 </TableCell>
                 <TableCell className="font-medium">{course.title}</TableCell>
-                <TableCell>
+                <TableCell className="hidden md:table-cell">
                   <Badge variant="outline">{course.category}</Badge>
                 </TableCell>
-                <TableCell className="hidden md:table-cell">${course.price.toFixed(2)}</TableCell>
-                <TableCell className="hidden md:table-cell">{course.instructor}</TableCell>
+                <TableCell className="hidden lg:table-cell">${course.price.toFixed(2)}</TableCell>
+                <TableCell className="hidden lg:table-cell">{course.instructor}</TableCell>
                 <TableCell>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>

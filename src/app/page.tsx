@@ -6,13 +6,14 @@ import { Badge } from '@/components/ui/badge';
 import { ArrowRight, Star, PlayCircle, Users, BookOpen } from 'lucide-react';
 import { CourseCard } from '@/components/shared/CourseCard';
 import { courses, testimonials } from '@/lib/data';
+import Link from 'next/link';
 
 export default function Home() {
   return (
     <div className="flex flex-col min-h-screen">
       <main className="flex-1">
         {/* Hero Section */}
-        <section className="relative py-20 md:py-32 bg-gradient-to-b from-background to-blue-50/50">
+        <section className="relative py-20 md:py-32 bg-gradient-to-b from-background to-blue-50/30 dark:to-transparent">
           <div className="container mx-auto px-4 text-center">
             <Badge variant="secondary" className="mb-4 text-primary font-semibold">Start Your Swift Journey Today</Badge>
             <h1 className="text-4xl md:text-6xl font-headline font-extrabold text-foreground mb-6 leading-tight">
@@ -21,11 +22,13 @@ export default function Home() {
             <p className="max-w-3xl mx-auto text-lg md:text-xl text-muted-foreground mb-8">
               Unlock your potential with expert-led courses. From beginner basics to advanced app architecture, we have a course for you.
             </p>
-            <div className="flex justify-center gap-4">
-              <Button size="lg" className="font-semibold">
-                Explore Courses <ArrowRight className="ml-2 h-5 w-5" />
-              </Button>
-              <Button size="lg" variant="outline" className="font-semibold">
+            <div className="flex flex-col sm:flex-row justify-center gap-4">
+              <Link href="/courses">
+                <Button size="lg" className="font-semibold w-full sm:w-auto">
+                  Explore Courses <ArrowRight className="ml-2 h-5 w-5" />
+                </Button>
+              </Link>
+              <Button size="lg" variant="outline" className="font-semibold w-full sm:w-auto">
                 Watch Intro <PlayCircle className="ml-2 h-5 w-5" />
               </Button>
             </div>
@@ -69,7 +72,7 @@ export default function Home() {
         </section>
 
         {/* Trending Courses Section */}
-        <section className="py-16 bg-blue-50/50">
+        <section className="py-16 bg-blue-50/30 dark:bg-card">
           <div className="container mx-auto px-4">
             <h2 className="text-3xl font-headline font-bold text-center mb-10">Trending Courses</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -78,10 +81,12 @@ export default function Home() {
               ))}
             </div>
              <div className="text-center mt-12">
-              <Button variant="outline" className="font-semibold">
-                View All Courses
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
+              <Link href="/courses">
+                <Button variant="outline" className="font-semibold">
+                  View All Courses
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+              </Link>
             </div>
           </div>
         </section>

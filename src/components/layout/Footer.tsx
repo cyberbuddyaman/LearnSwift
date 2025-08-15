@@ -4,16 +4,22 @@
 import Link from 'next/link';
 import { BookOpen } from 'lucide-react';
 import { usePathname } from 'next/navigation';
+import { useAuth } from '@/hooks/use-auth';
 
 export default function Footer() {
   const pathname = usePathname();
-  if (pathname.startsWith('/login') || pathname.startsWith('/signup')) {
+  const { loading } = useAuth();
+  
+  const isAuthPage = pathname.startsWith('/login') || pathname.startsWith('/signup');
+  const isAdminPage = pathname.startsWith('/admin');
+
+  if (isAuthPage || (isAdminPage && !loading)) {
     return null;
   }
     
   const footerLinks = {
     'Platform': [
-      { href: '#', label: 'Courses' },
+      { href: '/courses', label: 'Courses' },
       { href: '#', label: 'Plans & Pricing' },
       { href: '#', label: 'For Business' },
     ],
@@ -32,17 +38,17 @@ export default function Footer() {
   return (
     <footer className="border-t bg-background">
       <div className="container mx-auto px-4 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-          <div className="md:col-span-1">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+          <div className="lg:col-span-4">
             <Link href="/" className="flex items-center space-x-2 mb-4">
               <BookOpen className="h-8 w-8 text-primary" />
               <span className="font-bold font-headline text-2xl">LearnSwift</span>
             </Link>
-            <p className="text-muted-foreground text-sm">
+            <p className="text-muted-foreground text-sm max-w-xs">
               The best place to learn Swift and build amazing iOS applications.
             </p>
           </div>
-          <div className="md:col-span-3 grid grid-cols-2 md:grid-cols-3 gap-8">
+          <div className="lg:col-span-8 grid grid-cols-2 md:grid-cols-3 gap-8">
              {Object.entries(footerLinks).map(([title, links]) => (
               <div key={title}>
                 <h4 className="font-headline font-semibold mb-4">{title}</h4>
