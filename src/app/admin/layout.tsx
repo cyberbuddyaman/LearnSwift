@@ -1,3 +1,4 @@
+
 'use client';
 
 import {
@@ -23,12 +24,21 @@ import {
   LogOut,
   Bell,
 } from 'lucide-react';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
+import { useAuth } from '@/hooks/use-auth';
+import { Skeleton } from '@/components/ui/skeleton';
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const router = useRouter();
+  const { user, isAdmin, loading, logout } = useAuth();
+  
+  const handleLogout = async () => {
+    await logout();
+    router.push('/login');
+  };
 
   const menuItems = [
     { href: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard },
@@ -38,6 +48,31 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     { href: '/admin/gallery', label: 'Gallery', icon: ImageIcon },
     { href: '/admin/settings', label: 'Settings', icon: Settings },
   ];
+  
+  if (loading) {
+     return (
+        <div className="flex min-h-screen">
+          <div className="hidden md:block border-r" style={{width: '16rem'}}>
+            <div className="flex flex-col p-4 gap-4">
+              <Skeleton className="h-8 w-32" />
+              <Skeleton className="h-8 w-full" />
+              <Skeleton className="h-8 w-full" />
+              <Skeleton className="h-8 w-full" />
+            </div>
+          </div>
+          <main className="flex-1 p-6">
+            <Skeleton className="h-10 w-48 mb-6" />
+            <Skeleton className="w-full h-[500px]" />
+          </main>
+        </div>
+      );
+  }
+
+  if (!user || !isAdmin) {
+    // This part should ideally not be reached due to the redirect in useAuth,
+    // but it's good practice for robustness.
+    return null;
+  }
 
   return (
     <SidebarProvider>
@@ -74,7 +109,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             <div className="border-t -mx-2 p-2">
                  <SidebarMenu>
                     <SidebarMenuItem>
-                        <SidebarMenuButton>
+                        <SidebarMenuButton onClick={handleLogout}>
                             <LogOut className="size-4" />
                             <span>Logout</span>
                         </SidebarMenuButton>
@@ -83,12 +118,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             </div>
             <div className="flex items-center gap-2 p-2 border-t -mx-2">
               <Avatar>
-                <AvatarImage src="https://i.pravatar.cc/150?u=diana" />
-                <AvatarFallback>AD</AvatarFallback>
+                <AvatarImage src={user.photoURL || 'https://i.pravatar.cc/150?u=diana'} />
+                <AvatarFallback>{user.email?.[0].toUpperCase()}</AvatarFallback>
               </Avatar>
               <div className="flex flex-col text-sm">
-                <span className="font-semibold">Admin User</span>
-                <span className="text-muted-foreground">admin@learnswift.com</span>
+                <span className="font-semibold">{user.displayName || 'Admin User'}</span>
+                <span className="text-muted-foreground">{user.email}</span>
               </div>
             </div>
           </SidebarFooter>

@@ -1,8 +1,16 @@
+
+'use client';
+
 import Link from 'next/link';
 import { BookOpen } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { usePathname } from 'next/navigation';
 
 export default function Footer() {
+  const pathname = usePathname();
+  if (pathname.startsWith('/login') || pathname.startsWith('/signup')) {
+    return null;
+  }
+    
   const footerLinks = {
     'Platform': [
       { href: '#', label: 'Courses' },

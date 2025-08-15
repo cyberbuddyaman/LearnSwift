@@ -1,12 +1,17 @@
+
+'use client';
+
 import { CourseCard } from "@/components/shared/CourseCard";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { courses } from "@/lib/data";
 import { Award, Flame, Star, Trophy } from "lucide-react";
+import { useAuth } from "@/hooks/use-auth";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function StudentDashboard() {
+  const { user, loading } = useAuth();
   const enrolledCourses = courses.filter(c => c.isEnrolled);
 
   const gamification = {
@@ -17,16 +22,40 @@ export default function StudentDashboard() {
     ],
     leaderboard: [
       { id: 1, name: 'Alex Johnson', points: 1250, avatar: 'https://i.pravatar.cc/150?u=alex' },
-      { id: 2, name: 'You', points: 1100, avatar: 'https://i.pravatar.cc/150?u=you' },
+      { id: 2, name: 'You', points: 1100, avatar: `https://i.pravatar.cc/150?u=${user?.uid}` },
       { id: 3, name: 'Maria Garcia', points: 980, avatar: 'https://i.pravatar.cc/150?u=maria' },
     ]
   };
+
+  if (loading) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <Skeleton className="h-12 w-1/2 mb-8" />
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="lg:col-span-2 space-y-4">
+            <Skeleton className="h-8 w-1/4" />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <Skeleton className="h-80 w-full" />
+              <Skeleton className="h-80 w-full" />
+            </div>
+          </div>
+          <div className="lg:col-span-1 space-y-8">
+            <Skeleton className="h-64 w-full" />
+            <Skeleton className="h-48 w-full" />
+          </div>
+        </div>
+      </div>
+    );
+  }
+  
+  if(!user) return null;
+
 
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
         <div>
-          <h1 className="text-3xl font-headline font-bold">Welcome Back, Student!</h1>
+          <h1 className="text-3xl font-headline font-bold">Welcome Back, {user.displayName || 'Student'}!</h1>
           <p className="text-muted-foreground">Continue your learning journey and build something amazing today.</p>
         </div>
         <Button>Browse New Courses</Button>
