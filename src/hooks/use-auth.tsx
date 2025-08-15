@@ -6,7 +6,7 @@ import { onAuthStateChanged, User as FirebaseUser, createUserWithEmailAndPasswor
 import { auth, db } from '@/lib/firebase';
 import { useRouter, usePathname } from 'next/navigation';
 import { doc, setDoc, getDoc } from "firebase/firestore"; 
-import type { User, UserRole } from '@/lib/types';
+import type { User, UserRole } from "@/lib/types";
 import { Skeleton } from '@/components/ui/skeleton';
 
 interface AuthContextType {
@@ -57,8 +57,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      setUser(user);
+      setLoading(true);
       if (user) {
+        setUser(user);
         const userDocRef = doc(db, "users", user.uid);
         const userDoc = await getDoc(userDocRef);
         if (userDoc.exists()) {
@@ -71,6 +72,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
            setIsAdmin(userRole === 'admin');
         }
       } else {
+        setUser(null);
         setUserData(null);
         setIsAdmin(false);
       }
@@ -82,24 +84,29 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     if (loading) return;
-    
+
     const isAuthRoute = pathname.startsWith('/login') || pathname.startsWith('/signup');
     const isAdminRoute = pathname.startsWith('/admin');
     const isStudentDashboard = pathname.startsWith('/dashboard');
 
-    if (!user && (isAdminRoute || isStudentDashboard)) {
-      router.push('/login');
-    } else if (user) {
-        if (isAuthRoute) {
-            router.push(isAdmin ? '/admin/dashboard' : '/dashboard');
-        } else if (isAdminRoute && !isAdmin) {
-            router.push('/dashboard');
-        } else if (isStudentDashboard && isAdmin) {
-            router.push('/admin/dashboard');
-        }
+    if (user) {
+      if (isAuthRoute) {
+        // If user is on an auth page, redirect them to the correct dashboard
+        router.push(isAdmin ? '/admin/dashboard' : '/dashboard');
+      } else if (isAdmin && !isAdminRoute) {
+        // If an admin is not on an admin route, redirect them
+        router.push('/admin/dashboard');
+      } else if (!isAdmin && isAdminRoute) {
+        // If a non-admin is on an admin route, redirect them
+        router.push('/dashboard');
+      }
+    } else {
+      // If no user is logged in, and they are on a protected route, redirect to login
+      if (isAdminRoute || isStudentDashboard) {
+        router.push('/login');
+      }
     }
-
-  }, [user, loading, isAdmin, pathname, router]);
+  }, [user, userData, isAdmin, loading, pathname, router]);
 
   const login = (email: string, pass: string) => {
     return signInWithEmailAndPassword(auth, email, pass);
@@ -139,7 +146,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     logout,
     isAdmin,
   };
-
+  
   const isProtectedRoute = pathname.startsWith('/admin') || pathname.startsWith('/dashboard');
   if(loading && isProtectedRoute) {
     return <AuthLayoutSkeleton />;
