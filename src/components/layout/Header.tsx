@@ -23,10 +23,11 @@ export default function Header() {
   
   const navLinks = [
     { href: '/courses', label: 'Courses' },
-    { href: user ? (isAdmin ? '/admin/dashboard' : '/dashboard') : '/login', label: user ? 'Dashboard' : '' },
     { href: '#pricing', label: 'Pricing' },
     { href: '#community', label: 'Community' },
-  ].filter(link => link.label);
+  ];
+  
+  const dashboardHref = isAdmin ? '/admin/dashboard' : '/dashboard';
 
   const isAdminPage = pathname.startsWith('/admin');
   if (isAdminPage && !loading) {
@@ -46,6 +47,11 @@ export default function Header() {
               {link.label}
             </Link>
           ))}
+           {user && (
+            <Link href={dashboardHref} className="text-muted-foreground transition-colors hover:text-foreground">
+              Dashboard
+            </Link>
+          )}
         </nav>
         <div className="flex flex-1 items-center justify-end gap-2 sm:gap-4">
           <div className="relative hidden sm:block">
@@ -72,7 +78,7 @@ export default function Header() {
                   </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => router.push(isAdmin ? '/admin/dashboard' : '/dashboard')}>Dashboard</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => router.push(dashboardHref)}>Dashboard</DropdownMenuItem>
                 <DropdownMenuItem onClick={() => router.push('/courses')}>Courses</DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={handleLogout}>
@@ -106,6 +112,11 @@ export default function Header() {
                     {link.label}
                   </Link>
                 ))}
+                 {user && (
+                    <Link href={dashboardHref} className="text-muted-foreground hover:text-foreground">
+                        Dashboard
+                    </Link>
+                )}
               </nav>
             </SheetContent>
           </Sheet>
