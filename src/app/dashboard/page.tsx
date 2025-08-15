@@ -12,7 +12,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import Link from "next/link";
 
 export default function StudentDashboard() {
-  const { user, loading } = useAuth();
+  const { user, userData, loading } = useAuth();
   const enrolledCourses = courses.filter(c => c.isEnrolled);
 
   const gamification = {
@@ -23,7 +23,7 @@ export default function StudentDashboard() {
     ],
     leaderboard: [
       { id: 1, name: 'Alex Johnson', points: 1250, avatar: 'https://i.pravatar.cc/150?u=alex' },
-      { id: 2, name: 'You', points: 1100, avatar: `https://i.pravatar.cc/150?u=${user?.uid}` },
+      { id: 2, name: 'You', points: 1100, avatar: userData?.avatar || `https://i.pravatar.cc/150?u=${user?.uid}` },
       { id: 3, name: 'Maria Garcia', points: 980, avatar: 'https://i.pravatar.cc/150?u=maria' },
     ]
   };
@@ -56,7 +56,7 @@ export default function StudentDashboard() {
     <div className="container mx-auto px-4 py-8">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
         <div>
-          <h1 className="text-3xl font-headline font-bold">Welcome Back, {user.displayName || 'Student'}!</h1>
+          <h1 className="text-3xl font-headline font-bold">Welcome Back, {userData?.name || user.displayName || 'Student'}!</h1>
           <p className="text-muted-foreground">Continue your learning journey and build something amazing today.</p>
         </div>
         <Link href="/courses">
@@ -72,7 +72,14 @@ export default function StudentDashboard() {
               <CourseCard key={course.id} course={course} />
             ))}
             {enrolledCourses.length === 0 && (
-              <p>You are not enrolled in any courses yet.</p>
+              <Card className="flex items-center justify-center h-80">
+                <div className="text-center">
+                  <p className="mb-4">You are not enrolled in any courses yet.</p>
+                  <Link href="/courses">
+                    <Button>Explore Courses</Button>
+                  </Link>
+                </div>
+              </Card>
             )}
           </div>
         </div>
@@ -84,17 +91,17 @@ export default function StudentDashboard() {
             </CardHeader>
             <CardContent>
               <ul className="space-y-4">
-                {gamification.leaderboard.map((user, index) => (
-                  <li key={user.id} className={`flex items-center justify-between p-2 rounded-md ${user.name === 'You' ? 'bg-primary/10' : ''}`}>
+                {gamification.leaderboard.map((leaderboardUser, index) => (
+                  <li key={leaderboardUser.id} className={`flex items-center justify-between p-2 rounded-md ${leaderboardUser.name === 'You' ? 'bg-primary/10' : ''}`}>
                     <div className="flex items-center">
                       <span className="font-bold text-lg mr-4">{index + 1}</span>
                       <Avatar className="h-10 w-10 mr-3">
-                        <AvatarImage src={user.avatar} alt={user.name} />
-                        <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
+                        <AvatarImage src={leaderboardUser.avatar} alt={leaderboardUser.name} />
+                        <AvatarFallback>{leaderboardUser.name.charAt(0)}</AvatarFallback>
                       </Avatar>
                       <div>
-                        <p className="font-semibold">{user.name}</p>
-                        <p className="text-sm text-muted-foreground">{user.points} XP</p>
+                        <p className="font-semibold">{leaderboardUser.name === 'You' ? (userData?.name || 'You') : leaderboardUser.name}</p>
+                        <p className="text-sm text-muted-foreground">{leaderboardUser.points} XP</p>
                       </div>
                     </div>
                      {index < 3 && <Trophy className={`h-6 w-6 ${index === 0 ? 'text-yellow-400' : index === 1 ? 'text-gray-400' : 'text-orange-400'}`} />}
