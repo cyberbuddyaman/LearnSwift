@@ -92,11 +92,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     } else if (user) {
         if (isAuthRoute) {
             router.push(isAdmin ? '/admin/dashboard' : '/dashboard');
-        }
-        if (isAdminRoute && !isAdmin) {
+        } else if (isAdminRoute && !isAdmin) {
             router.push('/dashboard');
-        } 
-        if (isStudentDashboard && isAdmin) {
+        } else if (isStudentDashboard && isAdmin) {
             router.push('/admin/dashboard');
         }
     }
