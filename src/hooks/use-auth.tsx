@@ -3,8 +3,9 @@
 
 import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { onAuthStateChanged, User, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from 'firebase/auth';
-import { auth } from '@/lib/firebase';
+import { auth, db } from '@/lib/firebase';
 import { useRouter, usePathname } from 'next/navigation';
+import { doc, setDoc } from "firebase/firestore"; 
 
 interface AuthContextType {
   user: User | null;
@@ -56,8 +57,22 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     return signInWithEmailAndPassword(auth, email, pass);
   };
 
-  const signup = (email: string, pass: string) => {
-    return createUserWithEmailAndPassword(auth, email, pass);
+  const signup = async (email: string, pass: string) => {
+    const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
+    const user = userCredential.user;
+    if (user) {
+      const userRole = ADMIN_EMAILS.includes(user.email || '') ? 'admin' : 'student';
+      await setDoc(doc(db, "users", user.uid), {
+        name: user.displayName || user.email?.split('@')[0] || 'New User',
+        email: user.email,
+        role: userRole,
+        joinedDate: new Date().toISOString().split('T')[0],
+        status: 'active',
+        avatar: user.photoURL || `https://i.pravatar.cc/150?u=${user.uid}`,
+        id: user.uid
+      });
+    }
+    return userCredential;
   };
 
   const logout = () => {
